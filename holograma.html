@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>My first three.js app</title>
+		<style>
+			body { margin: 0; }
+			canvas { display: block; }
+		</style>
+	</head>
+	<body>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r119/three.min.js"></script>
+		<script src="PeppersGhostEffect.js"></script>
+		<script src="inflate.min.js"></script>
+		<script src="FBXLoader.js"></script>
+		<script>
+			var scene = new THREE.Scene();
+var camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 10000 );
+
+var renderer = new THREE.WebGLRenderer();
+renderer.setSize( window.innerWidth, window.innerHeight );
+document.body.appendChild( renderer.domElement );
+
+//efecto
+effect = new THREE.PeppersGhostEffect( renderer );
+				effect.setSize( window.innerWidth, window.innerHeight );
+				effect.cameraDistance = 5;
+
+//geometria
+var geometry = new THREE.BoxGeometry();
+var material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
+var cube = new THREE.Mesh( geometry, material );
+
+
+//modelo
+var light = new THREE.AmbientLight( 0x404040 ); // soft white light
+scene.add( light );
+var mixer;
+// model
+				var loader = new THREE.FBXLoader();
+
+				loader.load( 'holo.fbx', function ( object ) {
+
+					mixer = new THREE.AnimationMixer( object );
+
+					var action = mixer.clipAction( object.animations[ 0 ] );
+					action.play();
+
+					object.traverse( function ( child ) {
+
+						if ( child.isMesh ) {
+
+							child.castShadow = true;
+							child.receiveShadow = true;
+
+						}
+
+					} );
+					object.scale.set(0.01,0.01,0.01);
+					scene.add( object );
+
+				} );
+//render
+function animate() {
+	requestAnimationFrame( animate );
+	renderer.render( scene, camera );
+	if ( mixer ) mixer.update( 0.01 );
+	cube.rotation.x += 0.01;
+cube.rotation.y += 0.01;
+effect.render( scene, camera );
+}
+
+
+animate();
+		</script>
+	</body>
+</html>
