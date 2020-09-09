@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/phaser-ce/2.16.0/phaser.min.js"></script>
+	<script>
+	var game = new Phaser.Game(800, 640, Phaser.AUTO, 'phaser-example', { preload: preload, create: create, update: update });
+var w = 800, h = 600;
+var sprite;
+
+function preload() {
+    game.load.tilemap('map', 'tl.csv', null, Phaser.Tilemap.CSV);
+    game.load.image('bullet', 'bala.png');
+	game.load.image('imageKey', 'tilemap.png');
+    game.load.audio('piedra', 'rocas.mp3');
+    game.load.image('menu', 'boton.png', 100, 100);
+
+	//game.load.tilemap('level1', 'assets/games/starstruck/level1.json', null, Phaser.Tilemap.TILED_JSON);
+
+    //  37x45 is the size of each frame
+    //  There are 18 frames in the PNG - you can leave this value blank if the frames fill up the entire PNG, but in this case there are some
+    //  blank frames at the end, so we tell the loader how many to load
+    game.load.spritesheet('ms', '1.png', 188, 100, 10);
+
+}
+var player;
+var layer;
+var bullets;
+var facing = 'der';
+var jumpTimer = 0;
+var cursors;
+var jumpButton;
+var bg;
+var score = 0;
+var bulletTime = 0;
+var bullet;
+var p;
+
+
+function create() {
+    
+	game.physics.startSystem(Phaser.Physics.ARCADE);
+	game.world.setBounds(0, 0, 2100, 1280);
+    
+   //titlemap
+    map = game.add.tilemap('map', 64, 64);
+    map.addTilesetImage('imageKey');
+   
+    var score = 0;
+
+ 
+    //  Create our layer
+    layer = map.createLayer(0);
+
+    //  Resize the world
+    layer.resizeWorld();
+
+    //  This isn't totally accurate, but it'll do for now
+    map.setCollisionBetween(54, 83);
+    //game.physics.arcade.gravity.y = 250;
+
+    
+     //player
+    player = game.add.sprite(40, 100, 'ms');
+    game.camera.follow(player);
+    game.physics.enable(player, Phaser.Physics.ARCADE);
+    player.animations.add('der');
+    player.animations.add('stop', [0], 10, true);
+    player.body.setSize(1, 1, 50, 30);
+
+    //balas
+     bullets = game.add.group();
+    bullets.enableBody = true;
+    bullets.physicsBodyType = Phaser.Physics.ARCADE;
+
+    for (var i = 0; i < 20; i++)
+    {
+        var b = bullets.create(0, 0, 'bullet');
+        b.name = 'bullet' + i;
+        b.exists = false;
+        b.visible = false;
+        b.checkWorldBounds = true;
+        b.events.onOutOfBounds.add(resetBullet, this);
+    }
+    //musica
+    p=game.add.audio('piedra');
+
+    cursors = game.input.keyboard.createCursorKeys();
+    jumpButton = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
+
+     //  The score
+    scoreString = 'Score : ';
+    scoreText = game.add.text(10, 10, scoreString + score, { font: '34px Arial', fill: '#a37d00' });
+
+    //pausa
+    menu = game.add.sprite(w/2, h/2, 'menu');
+        menu.anchor.setTo(0.5, 0.5);
+        game.paused = true;
+
+    pause_label = game.add.text(350, 350, 'Start!!', { font: '32px Arial', fill: '#a37d00' })
+    pause_label.fontWeight = 'bold';;
+    pause_label.inputEnabled = true;
+    pause_label.events.onInputUp.add(function () {
+        
+        if (game.paused = true){
+        game.paused = false;
+        menu.visible=false;
+        pause_label.visible=false;
+    }
+        
+})
+}
+
+
+function update() {
+    //  Increase the score
+   
+ //colisión
+     game.physics.arcade.overlap(bullets, player, collisionHandler, null, this);
+
+	//game.camera.x += 2;
+    player.position.y=450;
+   
+//move
+ if (player.body.velocity.x >= 0){
+
+    	player.body.velocity.x -= 3;}
+
+   	else 
+   	{player.body.velocity.x = 0;  	}
+   
+        
+    if (jumpButton.isDown && game.time.now > jumpTimer)
+    {
+        player.body.velocity.x += 4;
+        fireBullet();
+       
+        player.animations.play('der');
+        facing = 'der';
+        score += 1;
+        scoreText.text = scoreString + score;
+        
+    }else{p.play();}
+    //world
+        
+
+}
+
+
+function fireBullet () {
+var f= 2+Math.random()*900;
+    if (game.time.now > bulletTime)
+    {
+        bullet = bullets.getFirstExists(false);
+
+        if (bullet)
+        {
+            bullet.reset(player.x + f,8);
+            bullet.body.velocity.y = 200;
+            bulletTime = game.time.now + 180;
+        }
+    }
+
+}
+function resetBullet (bullet) {
+
+    bullet.kill();
+
+}
+
+function render() {
+
+    game.debug.cameraInfo(game.camera, 500, 32);
+    game.debug.spriteCoords(player, 32, 32);
+
+
+}
+function collisionHandler (bullet, player) {
+
+    bullet.kill();
+    player.kill();
+    p.stop();
+    create();
+    score=score-score;
+
+
+}
+
+	</script>
+	<title></title>
+</head>
+<body>
+
+</body>
+</html>
