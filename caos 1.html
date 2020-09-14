@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Basic Three.js App</title>
+    <style>
+      html, body { margin: 0; padding: 0; overflow: hidden; }
+    </style>
+  </head>
+  <body>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/95/three.min.js"></script>
+    <script>
+ var scene = new THREE.Scene();
+var aspect = window.innerWidth / window.innerHeight;
+var camera = new THREE.PerspectiveCamera( 75, aspect, 0.1, 1000 );
+var renderer = new THREE.WebGLRenderer();
+renderer.setSize( window.innerWidth, window.innerHeight );
+//textura
+var loader = new THREE.TextureLoader();
+
+document.body.appendChild( renderer.domElement );
+
+//cube
+var material = new THREE.MeshBasicMaterial( {color: 0x6698C7} );
+
+var geometry = new THREE.BoxGeometry( 0.2, 0.2, 0.2 );
+var cube = new THREE.Mesh( geometry, material );
+scene.add( cube );
+var v1=[0,10,0];
+cube.position.x=v1[0];
+cube.position.y=v1[1];
+cube.position.z=v1[2];
+
+
+var cube2 = new THREE.Mesh( geometry, material );
+scene.add( cube2 );
+var v2=[-10,0,2];
+cube2.position.x=v2[0];
+cube2.position.y=v2[1];
+cube2.position.z=v2[2];
+
+
+var cube3 = new THREE.Mesh( geometry, material );
+scene.add( cube3 );
+var v3=[10,0,2];
+cube3.position.x=v3[0];
+cube3.position.y=v3[1];
+cube3.position.z=v3[2];
+
+
+
+var cube4= new THREE.Mesh( geometry, material );
+scene.add( cube4 );
+var v4=[0,0,10];
+cube4.position.x=v4[0];
+cube4.position.y=v4[1];
+cube4.position.z=v4[2];
+
+var cube5= new THREE.Mesh( geometry, material );
+scene.add( cube5);
+var v5=[0,5,5];
+cube5.position.x=v5[0];
+cube5.position.y=v5[1];
+cube5.position.z=v5[2];
+
+
+
+
+//random
+
+
+
+
+//grilla
+var size = 100;
+var divisions = 100;
+var gridHelper = new THREE.GridHelper( size, divisions );
+scene.add( gridHelper );
+
+//luz 
+var luz = new THREE.PointLight( 0xFFFFFF, 3, 35 );
+scene.add( luz );
+//camera
+camera.position.z = 15;
+camera.position.x = 10;
+camera.position.y = 10;
+camera.lookAt(0,0,0);
+var time =0;
+var vA=[0,5,0];
+//render
+
+var render = function () {
+  requestAnimationFrame( render );
+//aux
+
+var cubeA= new THREE.Mesh( geometry, material );
+scene.add( cubeA );
+time+=1;
+var a= Math.floor(Math.random()*4);
+
+
+if (a==0) {
+  vA[0]=(v1[0]+v5[0])/2;
+  vA[1]=(v1[1]+v5[1])/2;
+  vA[2]=(v1[2]+v5[2])/2;
+}
+if (a==1) {
+  vA[0]=(v2[0]+v5[0])/2;
+  vA[1]=(v2[1]+v5[1])/2;
+  vA[2]=(v2[2]+v5[2])/2;
+}
+
+if (a==2) {
+  vA[0]=(v3[0]+v5[0])/2;
+  vA[1]=(v3[1]+v5[1])/2;
+  vA[2]=(v3[2]+v5[2])/2;
+}
+
+if (a==3) {
+  vA[0]=(v4[0]+v5[0])/2;
+  vA[1]=(v4[1]+v5[1])/2;
+  vA[2]=(v4[2]+v5[2])/2;
+}
+
+cubeA.position.x=vA[0];
+cubeA.position.y=vA[1];
+cubeA.position.z=vA[2];
+scene.add(cubeA);
+v5=vA;
+
+
+
+
+console.log(vA);
+ 
+  renderer.render( scene, camera );
+};
+
+
+render();
+    </script>
+
+    
+    
+  </body>
+</html>
