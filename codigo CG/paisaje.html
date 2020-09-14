@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<script src= https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.10.2/p5.min.js></script>
+<script>
+
+///config
+function setup() {
+createCanvas(1200, 600);
+draw();
+ angle = radians(25);
+ for (var i = 0; i < 3; i++) {
+  generate();
+}
+}
+
+
+//l
+var axiom = "F";
+var sentence = axiom;
+var len = 50;
+
+var rules = [];
+rules[0] = {
+  a: "F",
+  b: "FF+[+F-F-F]-[-F+F+F]"
+}
+
+
+function generate() {
+  len *= 0.5;
+  var nextSentence = "";
+  for (var i = 0; i < sentence.length; i++) {
+    var current = sentence.charAt(i);
+    var found = false;
+    for (var j = 0; j < rules.length; j++) {
+      if (current == rules[j].a) {
+        found = true;
+        nextSentence += rules[j].b;
+        break;
+      }
+    }
+    if (!found) {
+      nextSentence += current;
+    }
+  }
+  sentence = nextSentence;
+  createP(sentence);
+ 
+}
+
+
+////fondo degradado
+
+function BG(){
+for (let i =0; i < width - 0; i++) {
+  for (let j = 1; j < height - 0; j++) {
+    let c = color(j+1900 ,j+50,j-125);
+	let b = color(j+255 ,j+50,j-30);
+
+
+    if ((Math.pow(i-600,2)+(Math.pow(j-300,2)))<10000) {
+    	
+        	set(i, j, b);
+		
+    }
+    else
+    {	set(i, j, c);}
+  }
+}
+updatePixels();
+
+}
+
+//montañas
+function drawMounts(alto,espacio,tama,senal) {
+  for (var x=0; x < width; x++) {
+    var onda = noise((200+x)*senal, 120*senal);
+    stroke(160,espacio,20);
+    line(x, (alto)+onda*tama, x, height);
+  }
+}
+//arbol recursivo
+function arbol(l,par){
+translate(0,-l);
+strokeWeight(l*0.1)
+
+stroke(128,64,0);
+line(0,0,0,l);
+
+
+if (l>5) {
+  if(par==2){
+//ram 1
+push();
+rotate(radians(-60));
+arbol(l*0.7,par+1);
+pop();
+
+//rama 2
+push();
+rotate(radians(60));
+arbol(l*0.7,par+1);
+pop();
+}
+
+else {
+push();
+rotate(radians(-60));
+arbol(l*0.7,par-1);
+pop();
+
+//rama 2
+push();
+rotate(radians(60));
+arbol(l*0.7,par-1);
+pop();
+//rama 3
+push();
+rotate(radians(0));
+arbol(l*0.7,par-1);
+pop();
+}
+
+}
+
+}
+//lienzo
+function draw() {
+background(255);
+noFill();
+stroke(0);
+strokeWeight(1);
+BG();
+drawMounts(320, 120,100,0.015);
+drawMounts(310, 100,95, 0.02);
+drawMounts(300,80,90, 0.03);
+translate(600,450);
+arbol(30,2);
+strokeWeight(1);
+translate(-400,50);
+for (var i = 0; i < sentence.length; i++) {
+    var current = sentence.charAt(i);
+
+    if (current == "F") {
+      line(0, 0, 0, -len);
+      translate(0, -len);
+    } else if (current == "+") {
+      rotate(PI/6);
+    } else if (current == "-") {
+      rotate(-PI/6)
+    } else if (current == "[") {
+      push();
+    } else if (current == "]") {
+      pop();
+    }
+  }
+
+translate(800,0);
+arbol(15,3);
+translate(-200,0);
+arbol(15,1);
+}
+
+
+
+</script>
+</head>
+<body>
+
+</body>
+</html>

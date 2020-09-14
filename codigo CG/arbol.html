@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<script src= https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.10.2/p5.min.js></script>
+<script>
+function setup() {
+	createCanvas(1200, 900);
+	
+}
+
+
+
+//arbol
+
+function arbol(l,par){
+translate(0,-l);
+strokeWeight(l*0.1)
+
+stroke(128,64,0);
+if (l!=50) {
+	stroke(0,143,57);
+}
+line(0,0,0,l);
+
+
+if (l>5) {
+	if(par==1){
+//ram 1
+push();
+rotate(radians(-60));
+arbol(l*0.7,par+1);
+pop();
+
+//rama 2
+push();
+rotate(radians(60));
+arbol(l*0.7,par+1);
+pop();
+}
+
+else {
+push();
+rotate(radians(-60));
+arbol(l*0.7,par-1);
+pop();
+
+//rama 2
+push();
+rotate(radians(60));
+arbol(l*0.7,par-1);
+pop();
+//rama 3
+push();
+rotate(radians(0));
+arbol(l*0.7,par-1);
+pop();
+}
+
+}
+
+}
+
+function draw() {
+
+background(255);
+noFill();
+stroke(0);
+translate(600,550);
+strokeWeight(1);
+arbol(50,2);
+
+
+
+}
+
+
+
+
+</script>
+</head>
+<body>
+
+</body>
+</html>
